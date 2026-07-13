@@ -1,6 +1,6 @@
 <div align="center">
 
-# Med-OPD: Medical Evidence-aware On-Policy Distillation
+# Med-OPD: Improving Medical Vision-Language Models via Evidence-Aware On-Policy Distillation
 
 *Evidence-aware post-training for medical vision-language models.*
 
