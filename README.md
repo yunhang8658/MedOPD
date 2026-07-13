@@ -30,13 +30,7 @@ The training code also supports an answer-aware teacher hint (`INJECT_MODE=gt_co
 
 ```text
 Med-OPD/
-|-- vaopd_CT.sh                    # Med-OPD training on the CT subset
-|-- vaopd_mri.sh                   # Med-OPD training on the MRI subset
-|-- vaopd_Disease_Diagnosis.sh     # Med-OPD training on Disease Diagnosis
-|-- vaopd_Lesion_Grading.sh        # Med-OPD training on Lesion Grading
-|-- opd_standard__*.sh             # Standard OPD baselines
-|-- merge_ckpts.sh                 # Merge FSDP checkpoints into HF weights
-|-- eval_ckpts.py                  # Evaluate saved checkpoints
+|-- medopd_CT.sh                    # Med-OPD training on the CT subset
 |-- scripts/                       # Inference, evaluation, and verification utilities
 `-- verl/                          # Customized verl implementation
 ```
@@ -55,8 +49,7 @@ conda activate verl
 
 cd Med-OPD/verl
 USE_MEGATRON=0 bash scripts/install_vllm_sglang_mcore.sh
-pip install math-verify
-cd ..
+
 ```
 
 The provided scripts target AMD GPUs with ROCm. Before launching training, adjust the machine-specific paths and GPU settings in the selected script:
@@ -81,33 +74,9 @@ Each script launches a Ray head and then runs Med-OPD training through `verl.tra
 cd Med-OPD
 
 # CT
-bash vaopd_CT.sh
+bash medopd_CT.sh
 
-# MRI
-bash vaopd_mri.sh
-
-# Disease Diagnosis
-bash vaopd_Disease_Diagnosis.sh
-
-# Lesion Grading
-bash vaopd_Lesion_Grading.sh
 ```
-
-The corresponding standard OPD baselines can be launched with `opd_standard__CTComputed_Tomography.sh`, `opd_standard__MRI.sh`, `opd_standard__Disease_Diagnosis.sh`, and `opd_standard__Lesion_Grading.sh`.
-
-## Implementation Notes
-
-| Parameter | Default | Description |
-|---|---:|---|
-| `ADV_ESTIMATOR` | `VAOPD` | Internal estimator identifier used by the Med-OPD source code. |
-| `N_RESPONSES` | `8` | Number of student rollouts sampled per training example. |
-| `LOG_PROB_TOP_K` | `16` | Student top-k candidate tokens retained for distillation. |
-| `TOP_K_STRATEGY` | `only_stu` | Builds the token candidate set from the student distribution. |
-| `VAOPD_PV` | `0.2` | Fraction of tokens assigned to the high-MEA group. |
-| `VAOPD_LAMBDA` | `0.5` | Relative weight of the high-MEA group loss. |
-| `VAOPD_TAU` | `1.0` | Temperature for trajectory-level MEA weighting. |
-| `data.vaopd_degrade_area_ratio` | `0.1` | Evidence degradation ratio used for MEA computation. |
-| `INJECT_MODE` | task-dependent | `gt_contrastive` enables the answer-aware teacher hint; `none` disables it. |
 
 The default experiment configuration uses Qwen3-VL-2B-Instruct as the student and Qwen3-VL-4B-Instruct as the teacher. Training scripts save FSDP checkpoints under `checkpoint/`; use `merge_ckpts.sh` to create Hugging Face-compatible model weights for inference or evaluation.
 
