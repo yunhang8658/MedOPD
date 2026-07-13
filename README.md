@@ -16,6 +16,7 @@
 ---
 
 ## Overview
+![1776212644959](figs/arch.png)
 
 This directory contains the source code for **Med-OPD**, which adapts on-policy distillation (OPD) to medical vision-language models (Med-VLMs). Standard OPD distills every token in a student-generated rollout equally, although only a small subset of a medical response usually describes diagnosis-critical visual evidence. Med-OPD addresses this imbalance with **Medical Evidence Advantage (MEA)**, which measures how strongly each generated token depends on fine-grained evidence in the medical image.
 
